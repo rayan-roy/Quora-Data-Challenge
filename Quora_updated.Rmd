@@ -1,0 +1,100 @@
+---
+title: "Quora A/B Testing Challenge - Rayan Roy"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 8,fig.height = 4)
+```
+
+In this Quora Data Challenge, our goal was to create a new UI design and see if the user engagement score increased with the new design. The metric of interest is active minutes that the user spent on the app and the corresponding response variable is the continous measurement of time spent by each user on each day. We can see the treatment has a large effect on its new users and non-readers espcially with female and unknown-gender users (Fig 2). This indicates that the new UI design could possibly increase user engagement on the app. We also see for readers user type, the average active minutes slightly increased (Fig 2) under the treatment but the change is not as significant as for non-reader or new users.
+
+
+Looking at user types, we see there is no signficant difference between the treatment and control group for contributors. The rest of the user types (non-reader, new_user and reader type) are significant. As for all gender types, we see significant difference between the treatment and control group. To further investigate, we look at the interaction between gender and user_type and observe that the UI design effect is not statistically significant for contributors users types regardless of what gender they are.This makes sense since we would think that contributers would post and write on Quora regardless if they are given a new design. 
+
+
+Overall, even though the results are statistically significant between the two treatments (user type, gender) for majority of the sections, the increase in time spent on Quora by the user after the introduction of new UI design 
+seems to be very small. Various stakeholders would have to be consulted to find if its worth spending the money to push the design into production for such a small time increase as compared to keep it as it is. Further studies need to conducted where there is a large population and equal proportion of users for treatment (currently its 80:20 for control: treatment which may be misleading). Paired t-test could also be conducted where same group of individuals are kept and are tested before and after the experiment. 
+
+$\;$
+$\;$
+
+```{r,echo=FALSE, warning=FALSE}
+library(readr)
+library(ggplot2)
+df3 <- read_csv("df3_quora.csv",col_types = cols(X1 = col_skip()))
+g <- ggplot(df3, aes(user_type, active_mins))
+g + geom_boxplot(aes(fill=factor(variant_number)))+
+theme(
+panel.background = element_blank(),
+panel.grid.major = element_line(colour = "blue",size=0.01,linetype =
+8),
+panel.grid.minor = element_blank(),
+axis.line.x = element_line(colour = "black"),
+axis.line.y = element_line(colour = "black"),
+legend.background = element_rect(fill="transparent", size=0.5,linetype="solid"),
+legend.position = c(0.9,0.9),
+legend.text = element_text(colour="black", size=14),
+legend.title=element_text(size=14),
+legend.box = "horizontal",
+axis.text = element_text(colour = "black"),
+axis.text.x = element_text(size = 14,vjust=0.6),
+axis.text.y = element_text(size = 14),
+axis.title = element_text(size = 14),
+strip.text.x = element_text(size = 14)) + labs(x='User Type', y='Active Mins') + guides(fill=guide_legend(title="Treatment")) + ggtitle("Fig 1a: Box plot of active minutes between control and treatment based on user type")
+
+
+
+```
+
+$\;$
+$\;$
+$\;$
+
+```{r, echo=FALSE}
+g <- ggplot(df3, aes(gender, active_mins))
+g + geom_boxplot(aes(fill=factor(variant_number)))+
+theme(
+panel.background = element_blank(),
+panel.grid.major = element_line(colour = "grey",size=0.01,linetype =
+8),
+panel.grid.minor = element_blank(),
+axis.line.x = element_line(colour = "black"),
+axis.line.y = element_line(colour = "black"),
+legend.background = element_rect(fill="transparent", size=0.5,
+linetype="solid"),
+legend.text = element_text(colour="black", size=14),
+legend.title=element_text(size=14),
+legend.box = "horizontal",
+axis.text = element_text(colour = "black"),
+axis.text.x = element_text(size = 14,vjust=0.6),
+axis.text.y = element_text(size = 14),
+axis.title = element_text(size = 14),
+strip.text.x = element_text(size = 14)) + labs(x='User-Gender',y='Active Mins') + guides(fill=guide_legend(title="Treatment")) + ggtitle("Fig 1b: Box plot of active minutes between control and treatment based on gender")
+```
+
+$\;$
+$\;$
+
+```{r, echo=FALSE}
+df3$f1f2 <- interaction(df3$user_type, df3$gender)
+g <- ggplot(df3, aes(f1f2, active_mins))
+g + geom_boxplot(aes(fill=factor(variant_number)))+
+theme(
+panel.background = element_blank(),
+panel.grid.major = element_line(colour = "grey",size=0.01,linetype =
+8),
+panel.grid.minor = element_blank(),
+axis.line.x = element_line(colour = "black"),
+axis.line.y = element_line(colour = "black"),
+legend.background = element_rect(fill="transparent", size=0.5,
+linetype="solid"),
+legend.text = element_text(colour="black", size=14),
+legend.title=element_text(size=14),
+legend.box = "horizontal",
+axis.text = element_text(colour = "black"),
+axis.text.x = element_text(size = 14,vjust=0.6,angle=90),
+axis.text.y = element_text(size = 14),
+axis.title = element_text(size = 14),
+strip.text.x = element_text(size = 14)) + labs(x='User_Type - Gender',y='Active Mins') + guides(fill=guide_legend(title="Treatment")) + ggtitle("Fig 2: Box plot of active minutes between control and treatment based on\n interaction of user type and gender")
+```
